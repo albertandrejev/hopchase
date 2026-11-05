@@ -1,0 +1,8 @@
+{
+  "name": "hopchase",
+  "version": "0.1.0",
+  "description": "Crypto fund-tracing investigations across Solana, EVM chains and TRON, including bridges, with structured case reports.",
+  "author": { "name": "Albert Andrejev / Opentech OÜ" },
+  "license": "MIT",
+  "keywords": ["crypto", "forensics", "tracing", "aml", "solana", "tron", "ethereum", "bridges"]
+}
