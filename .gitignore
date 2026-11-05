@@ -4,3 +4,4 @@ __pycache__/
 *.plugin
 .DS_Store
 .claude/
+_bmad

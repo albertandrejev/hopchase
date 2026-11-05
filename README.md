@@ -34,7 +34,7 @@ Set as environment variables; never put them in reports or commits. Copy `.env.e
 
 ## Quick start
 
-Python 3.10+, no third-party packages. Inside a Claude session the skills write raw outputs to `$SCRATCH/trace/` (the session scratchpad); by hand, pick any folder:
+Python 3.11+, no third-party packages. Inside a Claude session the skills write raw outputs to `$SCRATCH/trace/` (the session scratchpad); by hand, pick any folder:
 
 ```bash
 export SCRATCH=/tmp/hopchase && mkdir -p "$SCRATCH/trace"
@@ -60,7 +60,7 @@ Or add it to a marketplace you control and run `/plugin install hopchase@<market
 **Claude Desktop / Cowork** — package and upload:
 
 ```bash
-zip -r hopchase.plugin . -x ".git/*" -x "*.pyc" -x ".claude/*"
+zip -r hopchase.plugin . -x ".git/*" -x "*.pyc" -x ".claude/*" -x ".env" -x "_bmad/*" -x "_bmad-output/*"
 ```
 
 then add the `.plugin` file in the app's plugin settings. Skills are auto-discovered from `skills/`; scripts are reached through `${CLAUDE_PLUGIN_ROOT}/scripts/`.

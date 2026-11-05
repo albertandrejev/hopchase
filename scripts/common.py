@@ -94,7 +94,7 @@ def http(url, data=None, headers=None, tries=8, timeout=30):
             if e.code in (429, 502, 503, 504):
                 time.sleep(min(60, 5 * (i + 1)))
                 continue
-            log(f"HTTP {e.code} {url[:80]}")
+            log(f"HTTP {e.code} {url.split('?')[0][:80]}")  # query strings can carry API keys
             return None
         except Exception as e:  # noqa
             time.sleep(3)

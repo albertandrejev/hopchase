@@ -1,5 +1,6 @@
 """Offline smoke tests: no network. Run: python3 -m pytest tests/ or python3 tests/test_smoke.py"""
-import sys, os, json, re
+import contextlib, io, sys, os, json, re, urllib.error
+from unittest import mock
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 sys.path.insert(0, os.path.join(ROOT, "scripts"))
 import sol_trace, common
@@ -45,6 +46,19 @@ def test_readme_mentions_every_skill_and_script():
     for s in SCRIPTS:
         if s != "common.py":
             assert s in readme, s
+
+def test_http_error_log_omits_api_key():
+    key = "SECRETKEY1234567890"
+    urls = [f"https://mainnet.helius-rpc.com/?api-key={key}",
+            f"https://api.etherscan.io/v2/api?chainid=1&apikey={key}&address=0xabc"]
+    for url in urls:
+        err = urllib.error.HTTPError(url, 401, "Unauthorized", None, None)
+        stderr = io.StringIO()
+        with mock.patch("urllib.request.urlopen", side_effect=err), contextlib.redirect_stderr(stderr):
+            assert common.http(url) is None
+        logged = stderr.getvalue()
+        assert "HTTP 401" in logged, logged
+        assert key[:6] not in logged, logged
 
 if __name__ == "__main__":
     for n, f in list(globals().items()):
