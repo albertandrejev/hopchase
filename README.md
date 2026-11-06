@@ -49,13 +49,20 @@ python3 recheck.py case.json
 
 ## Install
 
-**Claude Code (CLI / desktop Code tab)** — load the checkout directly:
+**Claude Code (CLI / desktop Code tab)** — install from this repository's marketplace:
+
+```bash
+claude plugin marketplace add albertandrejev/hopchase
+claude plugin install hopchase@hopchase
+```
+
+Inside a session, use `/plugin marketplace add albertandrejev/hopchase`, then `/plugin install hopchase@hopchase`. To update later, run `claude plugin marketplace update hopchase`, then `claude plugin update hopchase@hopchase`.
+
+For development, load a checkout directly:
 
 ```bash
 claude --plugin-dir /path/to/hopchase
 ```
-
-Or add it to a marketplace you control and run `/plugin install hopchase@<marketplace>`.
 
 **Claude Desktop / Cowork** — package and upload:
 
