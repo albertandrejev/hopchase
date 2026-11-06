@@ -1,0 +1,16 @@
+{
+  "name": "hopchase",
+  "description": "Claude Code plugin for crypto fund-tracing investigations.",
+  "owner": {
+    "name": "Albert Andrejev / Opentech OÜ",
+    "url": "https://github.com/albertandrejev"
+  },
+  "plugins": [
+    {
+      "name": "hopchase",
+      "source": "./",
+      "description": "Crypto fund-tracing investigations across Solana, EVM chains and TRON, including bridges, with structured case reports.",
+      "category": "security"
+    }
+  ]
+}
