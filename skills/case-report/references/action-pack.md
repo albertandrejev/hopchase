@@ -27,6 +27,11 @@ Template (EN):
 | Rango Exchange | support via rango.exchange / Discord ticket | Request by memo/requestId and tx hash: destination details, IP, client |
 | Wormhole | Wormhole Foundation security contact | Usually nothing off-chain; use Wormholescan record as exhibit |
 | deBridge | support@debridge.finance | Order details by orderId |
+| Mayan | support@mayan.finance (from their compliance page); no dedicated channel for blocked funds | Orders by `orderId`/`orderHash`; the `screening` line (`sanctioned`, `SWAP_BLOCKED`) shows they already block the address — ask what happens to refunded blocked funds and for the screening provider's reference |
+| Relay | no public contact found; their quote API refuses blocked addresses, which is the only visible blocklist | Request by request `id` / deposit hash; expect to go through law enforcement |
+| SEAL 911 (Security Alliance) | Telegram `@seal_911_bot`; e-mail on securityalliance.org/sos | Accepts third-party tips; fastest route to issuer and bridge security teams when the victim is unknown or unreachable |
+
+Circle acts on law-enforcement requests, so the victim's police report comes first; a bridge or SEAL 911 contact buys time, it does not replace the case number.
 
 Template (EN):
 > We are investigating theft of [amount asset] from [victim addr] on [date]. Your order(s) [orderIds / tx hashes] moved proceeds from [chain] to [chain] address [addr]. Please (1) preserve all logs for these orders, (2) provide available metadata to the investigating authority [police unit, case no.], and (3) add the following addresses to your risk/blocklist to prevent further laundering: [list].
@@ -40,6 +45,14 @@ Template (EN):
 
 - Compliance/LE portals: Binance (LE portal), OKX, Bybit, HTX, KuCoin, Kraken, Coinbase — all require a case number; send the deposit address, tx hash, amount, time and ask for an account hold.
 - Send the same day: deposits are swept and withdrawn within hours.
+
+## Outreach when the victim is unknown
+
+No identified operator or victim contact (case 04): the trace still has to reach someone who can act.
+
+1. Find the victim's own treasury from pre-incident outflows: `sol_trace.py history <victim> --cap 300`, `-- top value recipients` footer — the recurring recipient of the months before the theft (weekly sweeps, a CEX deposit) is the owner's wallet until shown otherwise.
+2. Channels, in order: (a) the bridge holding the funds (Mayan/Relay rows above — they can hold a refund), (b) SEAL 911, (c) a public reply in the alert thread (quote hashes, no speculation about identity), (d) last, an on-chain memo to the treasury with a short pointer to the report. A memo is public and reaches the thief too: never put the freeze plan, contacts or amounts the thief does not already know into it.
+3. Record every attempt (channel, UTC time, what was sent) in the report's action pack so a second volunteer does not repeat it.
 
 ## Monitoring
 

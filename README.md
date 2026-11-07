@@ -14,11 +14,11 @@ Built from a real case (Oct 2026): 90.5k USDC swept from a Solana wallet → col
 
 | Script | Purpose |
 |---|---|
-| `scripts/sol_trace.py` | `tx` decode (incl. ComputeBudget client fingerprint), `history`, `balances`, `poison` check |
-| `scripts/evm_trace.py` | Blockscout (no key) / Etherscan v2 (key) — txs, token transfers, spoofed-token detection, exits used |
+| `scripts/sol_trace.py` | `tx` decode (incl. ComputeBudget client fingerprint, versioned txs), `history` (signers, memos as data, on-curve/PDA header, footers: signer + CU pairs, programs per tx, top value recipients, lot sizes, sweep loops, co-signed txs), `balances`, `freeze` (token-account state, mint freezeAuthority), `program` (upgrade authority + dated upgrade history), `poison` check; `history` footers also give time range per instruction type, last tx and memo deadlines |
+| `scripts/evm_trace.py` | Blockscout (no key) / Etherscan v2 (key) — txs (with calldata text of plain transfers, as data), internal txs, token transfers, spoofed-token detection, exits used; `freeze` = USDC/USDT blacklist via `eth_call` |
 | `scripts/tron_trace.py` | TronGrid — balances, in/out TRC-20, gas-hand-out pattern, endpoint hint |
-| `scripts/bridges.py` | Bridgers/SWFT order API (no key), Wormholescan, deBridge DLN |
-| `scripts/recheck.py` | Live re-verification of a `case.json`; also the hourly monitor |
+| `scripts/bridges.py` | Bridgers/SWFT order API (no key), Wormholescan, deBridge DLN, Mayan explorer API (multi-tx, de-duplicated by orderId; screening/sanctioned flags, deadline vs completedAt, listing count vs per-hash count, refunds split by baseline), Relay requests |
+| `scripts/recheck.py` | Live re-verification of a `case.json` (wallets, token accounts, escrows, freeze state), grouped by read time with an `## as-of stamps` line; also the hourly monitor |
 
 References: `skills/trace-funds/references/{bridges,endpoints,confidence}.md`, `skills/case-report/references/action-pack.md`.
 
@@ -29,8 +29,10 @@ Set as environment variables; never put them in reports or commits. Copy `.env.e
 | Variable | Effect |
 |---|---|
 | `HELIUS_API_KEY` | Solana RPC without 429s (public RPC works but a 300-tx history takes ~10 min) |
+| `ANKR_API_KEY` | Solana RPC when `HELIUS_API_KEY` is unset (priority Helius > Ankr > public) and EVM `eth_call` for `evm_trace.py freeze`. Networks are enabled per key in the Ankr dashboard: enable **Solana** and **Ethereum** (BNB Smart Chain is accepted but unused by the scripts today). Chains with a public Blockscout fall back automatically to its keyless `eth-rpc`; chains without one (bsc, avalanche) print `?` |
 | `ETHERSCAN_API_KEY` | Etherscan v2 for chains without public Blockscout (BSC, Avalanche) |
 | `TRONGRID_API_KEY` | Higher TronGrid limits |
+| `RELAY_API_KEY` | Relay `/requests/v3`; without it the keyless `/requests/v2` is used with a warning — a temporary path, v2 is sunset on 2026-11-24 |
 
 ## Quick start
 
@@ -41,8 +43,12 @@ export SCRATCH=/tmp/hopchase && mkdir -p "$SCRATCH/trace"
 cd scripts
 python3 sol_trace.py tx <SIGNATURE>
 python3 sol_trace.py history <RECIPIENT> > "$SCRATCH/trace/hop1.txt"
+python3 sol_trace.py freeze <RECIPIENT>
 python3 bridges.py bridgers <RECIPIENT>
+python3 bridges.py mayan <SIGNATURE>
+python3 bridges.py relay <0xTXHASH>
 python3 evm_trace.py <0x…> --all-chains
+python3 evm_trace.py freeze <0x…>
 python3 tron_trace.py <T…>
 python3 recheck.py case.json
 ```
